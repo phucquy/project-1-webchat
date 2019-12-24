@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+		<meta charset="utf-8">
+		<title>HUST Connection Chat Platform</title>
+		<meta name="description" content="#">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<!-- Bootstrap core CSS -->
+		<link href="../static/dist/css/lib/bootstrap.min.css" type="text/css" rel="stylesheet">
+		<!-- Swipe core CSS -->
+		<link href="../static/dist/css/swipe.min.css" type="text/css" rel="stylesheet">
+		<!-- Favicon -->
+		<link href="../static/dist/img/favicon.png" type="image/png" rel="icon">
+		<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+	</head>
+	<body>
+		<main>
+			<div class="layout">
+				<!-- Start of Navigation -->
+				<div class="navigation">
+					<div class="container">
+						<div class="inside">
+							<div class="nav nav-tab menu">
+								<button class="btn"><img class="avatar-xl" src="../static/{{user.image}}" alt="avatar"></button>
+								<!-- <a href="#members" data-toggle="tab"><i class="material-icons">account_circle</i></a> -->
+								<a href="#discussions" data-toggle="tab" class="active"><i class="material-icons active">account_circle</i></a>
+								<!-- <button class="btn mode"><i class="material-icons">brightness_2</i></button> -->
+								<a href="#settings" data-toggle="tab"><i class="material-icons">settings</i></a>
+								<a href="{{ url_for('main.login') }}" >
+									<button class="btn power" onclick="logOutAccount()"><i class="material-icons">power_settings_new</i></button>
+								</a>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- End of Navigation -->
+				<!-- Start of Sidebar -->
+				<div class="sidebar" id="sidebar">
+					<div class="container">
+						<div class="col-md-12">
+							<div class="tab-content">
+								<!-- Start of Contacts -->
+								<div class="tab-pane fade" id="members">
+									<div class="search">
+										<form class="form-inline position-relative">
+											<input type="search" class="form-control" id="people" placeholder="Search for people...">
+											<button type="button" class="btn btn-link loop"><i class="material-icons">search</i></button>
+										</form>
+										<button class="btn create" data-toggle="modal" data-target="#exampleModalCenter"><i class="material-icons">person_add</i></button>
+									</div>
+									<!-- <div class="list-group sort">
+										<button class="btn filterMembersBtn active show" data-toggle="list" data-filter="all">All</button>
+										<button class="btn filterMembersBtn" data-toggle="list" data-filter="online">Online</button>
+										<button class="btn filterMembersBtn" data-toggle="list" data-filter="offline">Offline</button>
+									</div>						 -->
+									<div class="contacts">
+										<!-- Chat contact -->
+										<h1>Contacts</h1>
+										<div class="list-group" id="contacts" role="tablist">
+											<a href="#frame-{{user.id}}" class="filterMembers all online contact" id="{{user.id}}"  onclick="chatId(this.id)" data-toggle="list">
+												<img class="avatar-md" src="../static/dist/img/avatars/avatar-female-1.jpg" data-toggle="tooltip" data-placement="top" title="Janette" alt="avatar">
+												<div class="status">
+													<i class="material-icons online">fiber_manual_record</i>
+												</div>
+												<div class="data">
+													<h5>Janette Dalton</h5>
+													<p>Sofia, Bulgaria</p>
+												</div>
+												<div class="person-add">
+													<i class="material-icons">person</i>
+												</div>
+											</a>
+											{% for user in users%}
+												<a href="#frame-{{user.id}}" class="filterMembers all online contact" data-toggle="list" id="{{user.id}}"  onclick="chatId(this.id)">
+													<img class="avatar-md" src="../static/{{user.image}}" data-toggle="tooltip" data-placement="top" title="Janette" alt="avatar">
+													<div class="status">
+														<i class="material-icons online">fiber_manual_record</i>
+													</div>
+													<div class="data">
+														<h5>{{user.username}}</h5>
+														<p style="font-size: 14px;font-weight:bold; ">Phone: {{user.phone}}</p>
+													</div>
+													<div class="person-add">
+														<i class="material-icons">person</i>
+													</div>
+												</a>
+											{% endfor %}
+											
+										</div>
+									</div>
+								</div>
+								<!-- End of Contacts -->
+								<!-- Start of Discussions -->
+								<div id="discussions" class="tab-pane fade active show">
+									<div class="search">
+										<form class="form-inline position-relative">
+											<input type="search" class="form-control" id="conversations" placeholder="Search for conversations...">
+											<button type="button" class="btn btn-link loop"><i class="material-icons">search</i></button>
+										</form>
+										<button class="btn create" data-toggle="modal" data-target="#startnewchat"><i class="material-icons">create</i></button>
+									</div>
+									<!-- <div class="list-group sort">
+										<button class="btn filterDiscussionsBtn active show" data-toggle="list" data-filter="all">All</button>
+										<button class="btn filterDiscussionsBtn" data-toggle="list" data-filter="read">Read</button>
+										<button class="btn filterDiscussionsBtn" data-toggle="list" data-filter="unread">Unread</button>
+									</div>						 -->
+									<div class="discussions">
+										<h1>Discussions</h1>
+										<div class="list-group" id="chats" role="tablist">
+											<!-- list chat -->
+											{% for user in users %}
+												<a href="#frame-{{user.id}}" class="filterDiscussions all read single" id="{{user.id}}"  onclick="chatId(this.id)" data-toggle="list" role="tab" >
+													<img class="avatar-md" src="../static/{{user.image}}" data-toggle="tooltip" data-placement="top" title="{{user.username}}" alt="avatar">
+													<div class="status">
+														<i class="material-icons offline" id="user_{{user.id}}">fiber_manual_record</i>
+													</div>
+													<div class="data">
+														<h5>{{user.username}}</h5>
+														<span>New</span>
+														<p>Phone : {{user.phone}}</p>
+													</div>
+												</a>
+											{% endfor %}
+										</div>
+									</div>
+								</div>
+								<!-- End of Discussions -->
+
+								<!-- Start of Settings -->
+								<div class="tab-pane fade" id="settings">			
+									<div class="settings">
+										<div class="profile">
+											<img class="avatar-xl" src="../static/{{user.image}}" alt="avatar">
+											<h1><a href="#">{{user.username}}</a></h1>
+											<span>Email : {{user.email}}</span>
+										</div>
+										<div class="categories" id="accordionSettings">
+											<h1>Settings</h1>
+											<!-- Start of My Account -->
+											<div class="category">
+												<a href="#" class="title collapsed" id="headingOne" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+													<i class="material-icons md-30 online">person_outline</i>
+													<div class="data">
+														<h5>My Account</h5>
+														<p>Update your profile details</p>
+													</div>
+													<i class="material-icons">keyboard_arrow_right</i>
+												</a>
+												<div class="collapse" id="collapseOne" aria-labelledby="headingOne" data-parent="#accordionSettings">
+													<div class="content">
+														<!-- <div class="upload">
+															<div class="data">
+																<img class="avatar-xl" src="../static/{{user.image}}" id="myImage" alt="image">
+																<label>
+																	<input type="file" accept="image/*" id="uploadData" onchange="showName(event)" name="Avatar" >
+																	<span class="btn button">Upload avatar</span>
+																</label>
+															</div>
+															<p>For best results, use an image at least 256px by 256px in either .jpg or .png format!</p>
+														</div> -->
+														<form method="POST" action="/chat">
+															<div class="upload">
+																	<div class="data">
+																		<img class="avatar-xl" src="../static/{{user.image}}" id="myImage" alt="image">
+																		<label>
+																			<input type="file" accept="image/*" id="uploadData" onchange="saveImage(event)" name="Avatar" >
+																			<span class="btn button">Upload avatar</span>
+																		</label>
+																	</div>
+																	<p>For best results, use an image at least 256px by 256px in either .jpg or .png format!</p>
+															</div>
+															<div class="parent">
+																<div class="field">
+																	<label for="Name">Name <span>*</span></label>
+																	<input type="text" class="form-control" id="myName" name="myName" placeholder="User name" value="{{user.username}}" required>
+																</div>
+															</div>
+															<div class="field">
+																<label for="email">Email <span>*</span></label>
+																<input type="email" class="form-control" id="myEmail" name="myEmail" placeholder="Enter your email address" value="{{user.email}}" required>
+															</div>
+															<div class="field">
+																	<label for="phone">Phone <span>*</span></label>
+																	<input type="text" class="form-control" id="myPhone"  name="myPhone" placeholder="Enter your email address" value="{{user.phone}}" required>
+																</div>
+															<div class="field">
+																<label for="password">Password</label>
+																<input type="text" class="form-control" id="myPassword" name="myPassword" placeholder="Enter a new password"  required>
+															</div>
+															<button  type="button" class="btn button w-100" onclick="updateAccount()" >Apply</button>
+														</form>
+													</div>
+												</div>
+											</div>
+											<!-- End of My Account -->
+
+
+											<!-- Start of Language -->
+											<div class="category">
+												<a href="#" class="title collapsed" id="headingSix" data-toggle="collapse" data-target="#collapseSix" aria-expanded="true" aria-controls="collapseSix">
+													<i class="material-icons md-30 online">language</i>
+													<div class="data">
+														<h5>Language</h5>
+														<p>Select preferred language</p>
+													</div>
+													<i class="material-icons">keyboard_arrow_right</i>
+												</a>
+												<div class="collapse" id="collapseSix" aria-labelledby="headingSix" data-parent="#accordionSettings">
+													<div class="content layer">
+														<div class="language">
+															<label for="country">Language</label>
+															<select class="custom-select" id="country" required>
+																<option value="">Select an language...</option>
+																<option>English, UK</option>
+																<option>English, US</option>
+															</select>
+														</div>
+													</div>
+												</div>
+											</div>
+											<!-- End of Language -->
+
+											<!-- Start of Logout -->
+											<div class="category">
+												<a href="sign-in.html" class="title collapsed">
+													<i class="material-icons md-30 online">power_settings_new</i>
+													<div class="data">
+														<h5>Power Off</h5>
+														<p>Log out of your account</p>
+													</div>
+													<i class="material-icons">keyboard_arrow_right</i>
+												</a>
+											</div>
+											<!-- End of Logout -->
+										</div>
+									</div>
+								</div>
+								<!-- End of Settings -->
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- End of Sidebar -->
+				<!-- Start of Add Friends -->
+				<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered" role="document">
+						<div class="requests">
+							<div class="title">
+								<h1>Add your friends</h1>
+								<button type="button" class="btn" data-dismiss="modal" aria-label="Close"><i class="material-icons">close</i></button>
+							</div>
+							<div class="content">
+								<form>
+									<div class="form-group">
+										<label for="user">Username:</label>
+										<input type="text" class="form-control" id="user" placeholder="Add recipient..." required>
+										<div class="user" id="contact">
+											<img class="avatar-sm" src="../static/dist/img/avatars/avatar-female-5.jpg" alt="avatar">
+											<h5>Keith Morris</h5>
+											<button class="btn"><i class="material-icons">close</i></button>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="welcome">Message:</label>
+										<textarea class="text-control" id="welcome" placeholder="Send your welcome message...">Hi Keith, I'd like to add you as a contact.</textarea>
+									</div>
+									<button type="submit" class="btn button w-100">Send Friend Request</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="main">
+					<div class="tab-content" id="nav-tabContent">
+						<!-- chat frame  -->
+						{% for user in users %}
+							<!-- Start of Babble  -->
+							<div class="babble tab-pane fade" id="frame-{{user.id}}" role="tabpanel" aria-labelledby="list-empty-list">
+								<!-- Start of Chat -->
+								<div class="chat" id="chat_{{user.id}}">
+									<div class="top">
+										<div class="container">
+											<div class="col-md-12">
+												<div class="inside">
+													<a href="#"><img class="avatar-md" src="../static/{{user.image}}" data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar"></a>
+													<div class="status">
+														<i class="material-icons offline" id="userf_{{user.id}}">fiber_manual_record</i>
+													</div>
+													<div class="data">
+														<h5><a href="#">{{user.username}}</a></h5>
+														<span id="span_{{user.id}}">Inactive</span>
+													</div>
+													<button class="btn connect d-md-block d-none" name="1"><i class="material-icons md-30">phone_in_talk</i></button>
+													<button class="btn connect d-md-block d-none" name="1"><i class="material-icons md-36">videocam</i></button>
+													<button class="btn d-md-block d-none"><i class="material-icons md-30">info</i></button>
+													<div class="dropdown">
+														<button class="btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="material-icons md-30">more_vert</i></button>
+														<div class="dropdown-menu dropdown-menu-right">
+															<button class="dropdown-item connect" name="1"><i class="material-icons">phone_in_talk</i>Voice Call</button>
+															<button class="dropdown-item connect" name="1"><i class="material-icons">videocam</i>Video Call</button>
+															<hr>
+															<button class="dropdown-item"><i class="material-icons">clear</i>Clear History</button>
+															<button class="dropdown-item"><i class="material-icons">block</i>Block Contact</button>
+															<button class="dropdown-item"><i class="material-icons">delete</i>Delete Contact</button>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="content" id="content_{{user.id}}">
+										<div class="container">
+											<div class="col-md-12">
+												
+											</div>
+										</div>
+									</div>
+									<div class="container">
+										<div class="col-md-12">
+											<div class="bottom">
+												<form class="position-relative w-100">
+													<textarea class="form-control" placeholder="Start typing for reply..." rows="1" id="message_{{user.id}}"></textarea>
+													<button class="btn emoticons"><i class="material-icons">insert_emoticon</i></button>
+													<button type="button" class="btn send"><i class="material-icons" onclick="chatFrame() ">send</i></button>
+												</form>
+												<label>
+													<!-- save file -->
+													<input type="file" id="uploadfile" onchange="saveFile()">
+													<span class="btn attach d-sm-block d-none"><i class="material-icons">attach_file</i></span>
+												</label> 
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- End of Chat -->
+								<!-- Start of Call -->
+								<div class="call" id="call2">
+									<div class="content">
+										<div class="container">
+											<div class="col-md-12">
+												<div class="inside">
+													<div class="panel">
+														<div class="participant">
+															<img class="avatar-xxl" src="../static/dist/img/avatars/avatar-female-2.jpg" alt="avatar">
+															<span>Connecting</span>
+														</div>							
+														<div class="options">
+															<button class="btn option"><i class="material-icons md-30">mic</i></button>
+															<button class="btn option"><i class="material-icons md-30">videocam</i></button>
+															<button class="btn option call-end"><i class="material-icons md-30">call_end</i></button>
+															<button class="btn option"><i class="material-icons md-30">person_add</i></button>
+															<button class="btn option"><i class="material-icons md-30">volume_up</i></button>
+														</div>
+														<button class="btn back" name="2"><i class="material-icons md-24">chat</i></button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- End of Call -->
+							</div>
+							<!-- End of Babble -->
+						{% endfor %}
+					</div>
+				</div>
+			</div> <!-- Layout -->
+		</main>
+		<!-- Bootstrap/Swipe core JavaScript
+		================================================== -->
+		<!-- Placed at the end of the document so the pages load faster -->
+		<script src="../static/dist/js/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+		<script>window.jQuery || document.write('<script src="../static/dist/js/vendor/jquery-slim.min.js"><\/script>')</script>
+		<script src="../static/dist/js/vendor/popper.min.js"></script>
+		<script src="../static/dist/js/swipe.min.js"></script>
+		<script src="../static/dist/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+		<script>
+			function scrollToBottom(el) { el.scrollTop = el.scrollHeight; }
+			scrollToBottom(document.getElementById('content'));
+		</script>
+		<script type="text/javascript">
+			var current_user_id = {{current_user.id}}; // id of sender
+			var current_chat_id;					   // id of receiver
+			var socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
+			// Socketio: connect (Display user online)
+			socket.on('response_connect', function(msg){
+				console.log(msg)
+				console.log("so nguoi online :" +msg.connected_id.length)
+				for (let i = 0; i < msg.connected_id.length; i++) {
+						if (msg.connected_id[i] != current_user_id) {
+							var id = 'user_' + msg.connected_id[i];
+							var id2 = 'userf_' + msg.connected_id[i];
+							var id3 = 'span_'+msg.connected_id[i];
+							document.getElementById(id).classList.remove("material-icons", "offline") ;
+							document.getElementById(id).classList.add("material-icons", "online") ;
+
+							document.getElementById(id2).classList.remove("material-icons", "offline") ;
+							document.getElementById(id2).classList.add("material-icons", "online") ;
+
+							document.getElementById(id3).innerHTML = "Active now"
+							console.log('da tim thay online user_id :'+ id)
+						}
+					}
+			});
+			//Socketio : disconnnect (Display user offline)
+			socket.on('response_disconnect', function (msg) {
+					console.log(msg);
+					var id = 'user_' 	+ 	msg.disconnect_id;
+					var id2 = 'userf_' 	+ 	msg.disconnect_id;
+					var id3 = 'span_'	+	msg.disconnect_id;
+
+					document.getElementById(id).classList.remove("material-icons", "online") ;
+					document.getElementById(id).classList.add("material-icons", "offline") ;
+
+					document.getElementById(id2).classList.remove("material-icons", "online") ;
+					document.getElementById(id2).classList.add("material-icons", "offline") ;
+					document.getElementById(id3).innerHTML = "Inactive"
+					console.log("nguoi dung out id :"+id);
+			});
+
+			//Socketio : my_response_chat (Display message current for Receiver)
+
+			socket.on('my_response_chat', function(msg){
+				var monthNames = ["Jan", "Feb", "March", "April", "May", "June","July", "Aug", "Sept", "Oct", "Nov", "Dec"];
+
+				if(msg.sender  == current_chat_id){
+					var TimeDB = new Date(msg.time);
+					var currentDate = new Date();
+						// distance > 1 day
+					if((currentDate - TimeDB ) >86400000){
+						var displayDate = monthNames[TimeDB.getMonth()] + " " +TimeDB.getDate();
+					}else{
+						var displayDate = formatAMPM(TimeDB);
+					}
+					if(msg.name == null){
+						var html ='';
+						html += '<div class="message">';
+						{% for user in users %}
+							if( msg.sender == {{user.id}})
+							{
+								var imgSrc = '"../static/{{user.image}}"';
+								html += '<img class="avatar-md" src=' + imgSrc+ 'data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">'
+							}
+						{% endfor %}
+						html += '<div class="text-main">';
+						html += '<div class="text-group">';
+						html += '<div class="text">';
+						html += '<p style="color: gray;">'+ msg.message + '</p>';
+						html +=	'</div>' + '</div>';
+						html +=' <span>' + displayDate + '</span>';
+						html +=	'</div>' + '</div>';
+					}else{
+						var html ='';
+						var displaySize = formatSize(msg.size)
+						html += '<div class="message">';
+						{% for user in users %}
+							if( msg.sender == {{user.id}})
+							{
+								var imgSrc = '"../static/{{user.image}}"';
+								html += '<img class="avatar-md" src=' + imgSrc+ 'data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">'
+							}
+						{% endfor %}
+						html += '<div class="text-main">';
+						html += '<div class="text-group">';
+						html += '<div class="text">';
+						html += '<div class="attachment">';
+						html +=	'<button class="btn attach"><i class="material-icons md-18">insert_drive_file</i></button>';
+						html += '<div class="file">'
+						html +=	'<h5><a href="/chat/'+msg.name+'">'+msg.name+'</a></h5>';
+						html += '<span>Size : '+ displaySize + '</span>';
+						html += '</div>	</div>	</div>	</div>';
+						html += '<span>'+displayDate+'</span>';
+						html += '</div>	</div>';
+					}
+					
+
+					var contentId = 'content_'+current_chat_id;
+					chat = document.getElementById(contentId).getElementsByClassName("container")[0].getElementsByClassName("col-md-12")[0];
+					chat.innerHTML = chat.innerHTML + html;
+
+
+
+				};
+			});
+
+			// Socketio : response_chat_history (Display history for Sender)
+			socket.on('response_chat_history', function(msg){
+					var chat_id = "chat_"+ current_chat_id;
+					displayHistoryChat(chat_id, msg);
+			});
+
+			// Socketio : display alert
+			socket.on('update_successful', function(msg){
+            	alert(msg);
+				location.reload(true);
+        	});
+
+			// Display history for current user 
+			function displayHistoryChat(chat_id, msg){
+				var monthNames = ["Jan", "Feb", "March", "April", "May", "June","July", "Aug", "Sept", "Oct", "Nov", "Dec"];
+				// console.log(msg);
+
+				var html = '';
+				
+				for(let index = 0; index < msg.length; index ++){
+					
+					var hisDate = new Date(msg[index].datetime);
+					var currentDate = new Date();
+					console.log(hisDate);
+					// set up time 
+					if((currentDate - hisDate ) > 86400000){
+						var displayDate = monthNames[hisDate.getMonth()] + " "+ hisDate.getDate();
+					}
+					else{
+						var displayDate = formatAMPM(hisDate);
+					}
+						
+
+					// sreach file 
+					var res = msg[index].content.charAt(8)
+					if(res != "#"){
+						if(msg[index].user_2 == current_user_id){
+							html += '<div class="message me">';
+							html += '<div class="text-main">';
+							html += '<div class="text-group me">';
+							html += '<div class="text me">';
+							html += '<p>'+ msg[index].content +'</p>';
+							html +=	'</div>' + '</div>';
+							html += '<span>'+ displayDate +'</span>';
+							html +=	'</div>' + '</div>';
+						}else{
+							html += '<div class="message">';
+							{% for user in users %}
+								if( msg[index].user_2 == {{user.id}})
+								{
+									var imgSrc = '"../static/{{user.image}}"';
+									html += '<img class="avatar-md" src=' + imgSrc+ 'data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">'
+								}
+							{% endfor %}
+							html += '<div class="text-main">';
+							html += '<div class="text-group">';
+							html += '<div class="text">';
+							html += '<p style="color: gray;">'+ msg[index].content+ '</p>';
+							html +=	'</div>' + '</div>';
+							html +=' <span>' + displayDate + '</span>';
+							html +=	'</div>' + '</div>';
+						}
+					}
+					if(res == "#"){
+						var arr = msg[index].content.split("#");
+						var content = arr[1]; // name of file
+						
+						if(msg[index].user_2 == current_user_id){
+							html += '<div class="message me">';
+							html += '<div class="text-main">';
+							html += '<div class="text-group me">';
+							html += '<div class="text me">';
+							html += '<div class="attachment">';
+							html +=	'<button class="btn attach"><i class="material-icons md-18">insert_drive_file</i></button>';
+							html += '<div class="file">'
+							html +=	'<h5><a href="/chat/'+content+'"  id="'+content+'">'+content+'</a></h5>';
+							html += '<span>'+'</span>';
+							html += '</div>	</div>	</div>	</div>';
+							html += '<span>'+displayDate+'</span>';
+							html += '</div>	</div>';
+						}else{
+							html += '<div class="message">';
+							{% for user in users %}
+								if( msg.sender == {{user.id}})
+								{
+									var imgSrc = '"../static/{{user.image}}"';
+									html += '<img class="avatar-md" src=' + imgSrc+ 'data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">'
+								}
+							{% endfor %}
+							html += '<div class="text-main">';
+							html += '<div class="text-group">';
+							html += '<div class="text">';
+							html += '<div class="attachment">';
+							html +=	'<button class="btn attach"><i class="material-icons md-18">insert_drive_file</i></button>';
+							html += '<div class="file">'
+							html +=	'<h5><a href="/chat/'+content+'" id="'+content+'" >'+content+'</a></h5>';
+							html += '<span>'+ "" + '</span>';
+							html += '</div>	</div>	</div>	</div>';
+							html += '<span>'+displayDate+'</span>';
+							html += '</div>	</div>';
+						}
+					}
+					//  set up content 
+					
+				}
+				var contentId = 'content_'+current_chat_id
+				chat = document.getElementById(contentId).getElementsByClassName("container")[0].getElementsByClassName("col-md-12")[0];
+				chat.innerHTML =  html;
+
+			}
+
+			// Get id receiver
+			function chatId(id){
+				current_chat_id = id;
+				socket.emit('chat_history', {
+					receiver : current_chat_id,
+					sender : current_user_id,
+				})
+				console.log("chatID :"+current_chat_id);
+			}
+			//set up time display
+			function formatAMPM(date) {
+				var hours = date.getHours();
+				var minutes = date.getMinutes();
+				var ampm = hours >= 12 ? 'PM' : 'AM';
+				hours = hours % 12;
+				hours = hours ? hours : 12; // the hour '0' should be '12'
+				minutes = minutes < 10 ? '0'+minutes : minutes;
+				var strTime = hours + ':' + minutes + ' ' + ampm;
+				return strTime;
+			}
+			function formatSize(size){
+				var displaySize ='';
+				if(size < 1024){
+					displaySize = size + " bytes";
+				}else if(size < 1048567 ){
+					displaySize =  Math.ceil(size/1024) + " KB";
+				}else{
+					displaySize =  Math.ceil(size/1024/1024) + " MB";
+				}
+				return displaySize;
+			}
+			// Log Out Account
+			function logOutAccount(){
+				msg = {'logout_id' : current_user_id};
+				socket.emit('logout_account', msg);
+			}
+			// Display message for current user
+			function chatFrame(){
+				id = 'message_'+ current_chat_id;
+				message = document.getElementById(id).value;
+				console.log("tin nhan gui di :"+ message);
+
+				var currentDate = new Date();
+				var time = currentDate.toISOString().split('T')[0]+' '+currentDate.toTimeString().split(' ')[0];
+				// console.log("thoi gian gui ve :"+ time);
+				if (message != null && message != "") {
+					socket.emit('my_event_chat', {
+					message : message,
+					receiver : current_chat_id,
+					sender : current_user_id,
+					time : time
+					});
+
+					var displayDate = formatAMPM(new Date);
+					var html ='';
+					html += '<div class="message me">';
+					html += '<div class="text-main">';
+					html += '<div class="text-group me">';
+					html += '<div class="text me">';
+					html += '<p>'+ message +'</p>';
+					html +=	'</div>' + '</div>';
+					html += '<span>'+ displayDate +'</span>';
+					html +=	'</div>' + '</div>';
+					
+					var contentId = 'content_'+current_chat_id;
+					var chat = document.getElementById(contentId).getElementsByClassName("container")[0].getElementsByClassName("col-md-12")[0];
+					chat.innerHTML = chat.innerHTML + html;
+
+					message = document.getElementById(id).value = "";
+				}
+			}
+			// update Account 
+			function updateAccount(){
+				var file = document.getElementById('uploadData').files[0];
+				var nameImage ;
+				if(file != null){
+					nameImage = file.name
+				}else{
+					var imageLink = document.getElementById("myImage").src
+					var linkArr = imageLink.split('/');
+					nameImage = linkArr[(linkArr.length -1)];
+					
+				}
+				console.log("name image: "+nameImage);
+				msg = {id : current_user_id,
+						myEmail : document.getElementById("myEmail").value,
+						myName : document.getElementById("myName").value,
+						myPhone : document.getElementById("myPhone").value,
+						myPassword : document.getElementById("myPassword").value,
+						myImage : nameImage,
+						}
+				// console.log(msg);
+				socket.emit('update_account', msg);
+			}
+			function saveImage(event) {
+				var file = document.getElementById('uploadData').files[0];
+				var fileReader = new FileReader(), 
+				slice = file.slice(0, 10000000); 
+				fileReader.readAsDataURL(file);
+				fileReader.onload = function(e) {
+					var arrayBuffer = fileReader.result; 
+					document.getElementById("myImage").src = arrayBuffer
+					socket.emit('slice_upload', { 
+					name: file.name, 
+					data: arrayBuffer 
+					// type: file.type, 
+					// size: file.size, 
+					}); 
+				};
+			}
+			function saveFile(event) {
+				var file = document.getElementById('uploadfile').files[0];
+				console.log("ten file gui "+file.name);
+				var fileReader = new FileReader(), 
+				slice = file.slice(0, 10000000); 
+				fileReader.readAsDataURL(file);
+
+
+
+				//diplay file in current user
+				var currentDate = new Date();
+				var time = currentDate.toISOString().split('T')[0]+' '+currentDate.toTimeString().split(' ')[0];
+				var displayDate = formatAMPM(new Date);
+				var displaySize = '';
+				if(file.size < 1024){
+					displaySize = file.size + " bytes";
+				}else if(file.size < 1048567 ){
+					displaySize =  Math.ceil(file.size/1024) + " KB";
+				}else{
+					displaySize =  Math.ceil(file.size/1024/1024) + " MB";
+				}
+				console.log("Type : "+file.type)
+				var displayType = formatSize(file.size);
+
+				var html ='';
+				html += '<div class="message me">';
+				html += '<div class="text-main">';
+				html += '<div class="text-group me">';
+				html += '<div class="text me">';
+				html += '<div class="attachment">';
+				html +=	'<button class="btn attach"><i class="material-icons md-18">insert_drive_file</i></button>';
+				html += '<div class="file">'
+				html +=	'<h5><a href="#">'+file.name+'</a></h5>';
+				html += '<span>Size : '+ displaySize + '</span>';
+				html += '</div>	</div>	</div>	</div>';
+				html += '<span>'+displayDate+'</span>';
+				html += '</div>	</div>';
+				var contentId = 'content_'+current_chat_id;
+				var chat = document.getElementById(contentId).getElementsByClassName("container")[0].getElementsByClassName("col-md-12")[0];
+				chat.innerHTML = chat.innerHTML + html;
+				
+				// send info to server
+				fileReader.onload = function(e) {
+					var arrayBuffer = fileReader.result; 
+					socket.emit('slice_upload_file', { 
+					name: file.name, 
+					data: arrayBuffer, 
+					type: file.type, 
+					size: file.size,
+					receiver : current_chat_id,
+					sender : current_user_id,
+					time : time
+					}); 
+				};
+
+			}
+			function downloadFile(msg){
+					socket.emit('download_file',msg);
+					console.log("name file send to server :"+msg);
+				}
+		</script>
+	</body>
+
+
+</html>

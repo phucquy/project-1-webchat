@@ -1,0 +1,5 @@
+audio/mp3
+application/x-zip-compressed
+image/jpeg
+image/png
+Type : text/plain
